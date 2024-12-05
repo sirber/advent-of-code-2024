@@ -10,7 +10,7 @@
  */
 
 // Get the Data
-$data = file_get_contents('./d01p1.txt');
+$data = file_get_contents('./d01.txt');
 $lines = explode("\n", $data);
 
 // Split in two list
