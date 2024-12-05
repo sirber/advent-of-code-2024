@@ -25,38 +25,14 @@ foreach ($lines as $line) {
     continue;
   }
 
-  // Cleanup
-  $nbDiffs = count($numbers) - 1;
-  for ($i = 0; $i < $nbDiffs; $i++) {
-    // Remove same level
-    if ((int) $numbers[$i] == (int) $numbers[$i + 1]) {
-      unset($numbers[$i + 1]);
-      break;
-    }
-
-    // Remove high difference
-    $diff = abs((int) $numbers[$i] - (int) $numbers[$i + 1]);
-    if ($diff > 3) {
-      unset($numbers[$i + 1]);
-      break;
-    }
-
-    // Remove level that prevent increasing or decreasing
-    if ($i > 0) {
-      // Current, previous, and next comparison
-      if (
-        ((int) $numbers[$i - 1] < (int) $numbers[$i] && (int) $numbers[$i] > (int) $numbers[$i + 1]) ||
-        ((int) $numbers[$i - 1] > (int) $numbers[$i] && (int) $numbers[$i] < (int) $numbers[$i + 1])
-      ) {
-        unset($numbers[$i]);
-        break;
-      }
-    }
+  $isSafe = isSafeTolerance($numbers);
+  if ($isSafe) {
+    $nbSafe++;
   }
+}
 
-  $numbers = array_values($numbers); // regenerate the index
-
-  // Count
+function isSafe(array $numbers): bool
+{
   $nbIncreasing = 0;
   $nbDecreasing = 0;
   $nbDiffInRange = 0;
@@ -79,9 +55,29 @@ foreach ($lines as $line) {
   // Validate
   $check1 = ($nbDiffs == $nbIncreasing || $nbDiffs == $nbDecreasing);
   $check2 = ($nbDiffs == $nbDiffInRange);
-  if ($check1 && $check2) {
-    $nbSafe++;
+
+  return $check1 && $check2;
+}
+
+function isSafeTolerance(array $numbers): bool
+{
+  if (isSafe($numbers)) {
+    return true;
   }
+
+  for ($i = 0; $i < count($numbers); $i++) {
+    $testNumbers = $numbers;
+
+    unset($testNumbers[$i]);
+    $testNumbers = array_values($testNumbers);
+
+    $isSafe = isSafe($testNumbers);
+    if ($isSafe) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 echo "Result: $nbSafe";
