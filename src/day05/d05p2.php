@@ -7,12 +7,6 @@
  * @link https://adventofcode.com/2024/day/5#part2
  */
 
-/**
- * Algo
- * 
- * 
- */
-
 // Data
 $data = file_get_contents('./d05.txt');
 $lines = explode("\n", $data);
