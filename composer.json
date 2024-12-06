@@ -7,7 +7,7 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Sirber\\AdventOfCode2024\\": "src/"
+      "AoC\\": "src/"
     }
   }
 }
