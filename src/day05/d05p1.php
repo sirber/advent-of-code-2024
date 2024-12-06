@@ -111,7 +111,8 @@ function validatePageOrder(int $page, array $pagesBefore, array $pageOrders): bo
 function sumMiddlePages(array $manual): int
 {
   $middlePages = array_slice($manual, 1, -1);
-  $sum = array_sum($middlePages);
+  $middleIndex = round(count($middlePages) / 2, PHP_ROUND_HALF_DOWN);
+  $sum = $middlePages[$middleIndex];
 
   echo "Sum of '" . join(',', $middlePages) . "' is $sum" . PHP_EOL;
 
