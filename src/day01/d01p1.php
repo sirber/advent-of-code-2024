@@ -1,5 +1,7 @@
 <?php
 
+namespace Sirber\Day01;
+
 /**
  * Within each pair, figure out how far apart the two numbers are; you'll need to 
  * add up all of those distances. For example, if you pair up a 3 from the left 

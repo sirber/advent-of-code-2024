@@ -1,5 +1,7 @@
 <?php
 
+namespace Sirber\Day02;
+
 /**
  * The engineers are trying to figure out which reports are safe. 
  * The Red-Nosed reactor safety systems can only tolerate levels that are 

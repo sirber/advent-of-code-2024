@@ -1,5 +1,7 @@
 <?php
 
+namespace Sirber\Day04;
+
 /**
  * Looking for the instructions, you flip over the word search to find that 
  * this isn't actually an XMAS puzzle; it's an X-MAS puzzle in which you're 
