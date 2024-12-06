@@ -63,17 +63,21 @@ foreach ($manuals as $manual) {
   }
 }
 
+echo "Result: $result";
+
 function validateManual(array $manual, array $pageOrders): bool
 {
+  echo "Manual: " . join(',', $manual) . PHP_EOL;
+
   foreach ($manual as $index => $page) {
-    if (!isset($manual[$index + 1])) {
-      break;
+    if ($index === 0) {
+      continue;
     }
 
-    $pagesAfter = array_slice($manual, $index + 1);
+    $pagesBefore = array_slice($manual, 0, $index);
 
-    $isPageValid = validatePageOrder($page, $pagesAfter, $pageOrders);
-    if ($isPageValid) {
+    $isPageValid = validatePageOrder($page, $pagesBefore, $pageOrders);
+    if (!$isPageValid) {
       return false;
     }
   }
@@ -81,16 +85,35 @@ function validateManual(array $manual, array $pageOrders): bool
   return true;
 }
 
-function validatePageOrder(int $page, array $pagesAfter, $pageOrders): bool
+function validatePageOrder(int $page, array $pagesBefore, array $pageOrders): bool
 {
-  // TODO:
+  $currentPageOrders = array_filter($pageOrders, function ($order) use ($page) {
+    return $order[0] == $page;
+  });
 
-  return false;
+  $currentPageMustBeBefore = array_map(function ($order) {
+    return $order[1];
+  }, $currentPageOrders);
+
+  $isCorrect = true;
+  foreach ($pagesBefore as $testPage) {
+    $isPageFound = array_search($testPage, $currentPageMustBeBefore);
+    if ($isPageFound !== false) {
+      $isCorrect = false;
+    }
+  }
+
+  echo "Page $page is " . ($isCorrect ? "correct" : "incorrect") . PHP_EOL;
+
+  return $isCorrect;
 }
 
 function sumMiddlePages(array $manual): int
 {
   $middlePages = array_slice($manual, 1, -1);
+  $sum = array_sum($middlePages);
 
-  return array_sum($middlePages);
+  echo "Sum of '" . join(',', $middlePages) . "' is $sum" . PHP_EOL;
+
+  return $sum;
 }
