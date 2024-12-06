@@ -50,63 +50,31 @@ foreach ($manuals as $manual) {
 
 echo "Result: $result";
 
-function reorderManual(array $manual, array $dependencies)
+function reorderManual(array $manual, array $dependencies): array
 {
-    // Step 1: Build a dependency graph
-    $graph = [];
-    $inDegree = [];
-    $allPages = array_flip($manual); // Flip to map pages for fast lookup
-
-    foreach ($dependencies as [$page, $mustBeBefore]) {
-        // Skip dependencies not in the manual
-        if (!isset($allPages[$page]) || !isset($allPages[$mustBeBefore])) {
-            continue;
-        }
-
-        $graph[$page][] = $mustBeBefore;
-        $inDegree[$mustBeBefore] = ($inDegree[$mustBeBefore] ?? 0) + 1;
-        $inDegree[$page] = $inDegree[$page] ?? 0;
+    // Create a quick lookup map for direct dependencies
+    $dependencyMap = [];
+    foreach ($dependencies as [$before, $after]) {
+        $dependencyMap[$before][] = $after;
     }
 
-    // Step 2: Perform topological sorting
-    $queue = [];
-    foreach ($inDegree as $page => $count) {
-        if ($count === 0) {
-            $queue[] = $page;
+    // Define a simple comparison function
+    usort($manual, function ($a, $b) use ($dependencyMap) {
+        // If $a must come before $b
+        if (isset($dependencyMap[$a]) && in_array($b, $dependencyMap[$a])) {
+            return -1;
         }
-    }
 
-    $sortedOrder = [];
-    while (!empty($queue)) {
-        $current = array_shift($queue);
-        $sortedOrder[] = $current;
-
-        if (isset($graph[$current])) {
-            foreach ($graph[$current] as $neighbor) {
-                $inDegree[$neighbor]--;
-                if ($inDegree[$neighbor] === 0) {
-                    $queue[] = $neighbor;
-                }
-            }
+        // If $b must come before $a
+        if (isset($dependencyMap[$b]) && in_array($a, $dependencyMap[$b])) {
+            return 1;
         }
-    }
 
-    // Step 3: Reorder the manual based on the sorted order
-    $reorderedManual = [];
-    foreach ($sortedOrder as $page) {
-        if (in_array($page, $manual)) {
-            $reorderedManual[] = $page;
-        }
-    }
+        // Otherwise, keep the original order
+        return 0;
+    });
 
-    // Append remaining pages not in dependencies
-    foreach ($manual as $page) {
-        if (!in_array($page, $reorderedManual)) {
-            $reorderedManual[] = $page;
-        }
-    }
-
-    return $reorderedManual;
+    return $manual;
 }
 
 function validateManual(array $manual, array $pageOrders): bool
