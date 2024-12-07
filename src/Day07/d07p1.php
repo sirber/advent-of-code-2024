@@ -12,7 +12,6 @@ $lineRegex = '/(\d+)/';
 $operations = ['+', '*'];
 
 $result = 0;
-
 foreach ($lines as $line) {
   // Get numbers and cleanup
   $matches = [];
@@ -34,7 +33,7 @@ foreach ($lines as $line) {
   }
 }
 
-echo "\n\nResult: $evaluated\n";
+echo "\n\nResult: $result\n";
 
 /**
  * Generate all possible expressions using numbers and operators
