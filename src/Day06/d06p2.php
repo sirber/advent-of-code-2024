@@ -3,7 +3,14 @@
 namespace Sirber\Day06;
 
 /**
- * @link https://adventofcode.com/2024/day/6
+ * You need to get the guard stuck in a loop by adding 
+ * a single new obstruction. How many different positions 
+ * could you choose for this obstruction?
+ * 
+ * Strategy:
+ * - try every "." on the map
+ * 
+ * @link https://adventofcode.com/2024/day/6#part2
  */
 
 // Data
@@ -60,31 +67,46 @@ foreach ($lines as $y => $line) {
 echo "Room is " . count($grid[0]) . " by " . count($grid) . PHP_EOL;
 echo "Guard is at: " . join(',', $guard->location) . PHP_EOL;
 
-// Play
-$canMove = MoveType::OK;
-while ($canMove != MoveType::OUT_OF_MAP) {
-  echo '[' . join(',', $guard->location) . '] ' . $guard->direction . PHP_EOL;
+$freeSpots = getFreeSpots($grid);
+echo "Nb free spots: " . count($freeSpots) . PHP_EOL;
 
-  $canMove = canMove($guard, $grid, $directions);
-  switch ($canMove) {
-    case MoveType::OBSTRUCTION:
-      $newDirection = turnGuard($guard->direction, $directions);
-      $grid[$guard->location[0]][$guard->location[1]] = $newDirection;
-      $guard->setDirection($newDirection);
-      break;
+$nbLoop = 0;
+foreach ($freeSpots as [$y, $x]) {
+  $room = $grid; // get a fresh copy
+  $room[$y][$x] = 'O';
 
-    case MoveType::OUT_OF_MAP:
-      markAsVisited($guard->location, $grid);
+  // Play
+  $canMove = MoveType::OK;
+  $nbMove = 0;
+  while ($canMove != MoveType::OUT_OF_MAP) {
+    // Safety
+    if ($nbMove > 10000) {
+      $nbLoop++;
       break;
+    }
 
-    case MoveType::OK:
-      markAsVisited($guard->location, $grid);
-      moveGuard($guard, $grid, $directions);
-      break;
+    $canMove = canMove($guard, $room, $directions);
+    switch ($canMove) {
+      case MoveType::OBSTRUCTION:
+        $newDirection = turnGuard($guard->direction, $directions);
+        $room[$guard->location[0]][$guard->location[1]] = $newDirection;
+        $guard->setDirection($newDirection);
+        break;
+
+      case MoveType::OUT_OF_MAP:
+        markAsVisited($guard->location, $room);
+        break;
+
+      case MoveType::OK:
+        markAsVisited($guard->location, $room);
+        moveGuard($guard, $room, $directions);
+        $nbMove++;
+        break;
+    }
   }
 }
 
-echo "Result: " . findInRoom($grid, 'X') . PHP_EOL;
+echo "Result: " . $nbLoop . PHP_EOL;
 
 function findInRoom(array $room, string $type = '.'): int
 {
@@ -99,6 +121,21 @@ function findInRoom(array $room, string $type = '.'): int
   return $count;
 }
 
+function getFreeSpots(array $room): array
+{
+  $freeSpots = [];
+
+  foreach ($room as $y => $row) {
+    foreach ($row as $x => $cell) {
+      if ($cell === '.') {
+        $freeSpots[] = [$y, $x];
+      }
+    }
+  }
+
+  return $freeSpots;
+}
+
 function canMove(Guard $guard, array $room, array $directions): MoveType
 {
   $newLocation = getNewLocation($guard, $directions);
@@ -110,7 +147,7 @@ function canMove(Guard $guard, array $room, array $directions): MoveType
   }
 
   // Check for obstruction
-  if ($value === '#') {
+  if ($value === '#' or $value === 'O') {
     return MoveType::OBSTRUCTION;
   }
 
