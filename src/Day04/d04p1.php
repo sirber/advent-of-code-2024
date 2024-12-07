@@ -1,7 +1,5 @@
 <?php
 
-namespace Sirber\Day04;
-
 /**
  * She only has to find one word: XMAS.
  * 

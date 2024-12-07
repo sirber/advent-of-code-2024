@@ -1,7 +1,5 @@
 <?php
 
-namespace Sirber\Day03;
-
 /**
  * There are two new instructions you'll need to handle:
  * 

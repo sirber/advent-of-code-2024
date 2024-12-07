@@ -1,7 +1,5 @@
 <?php
 
-namespace Sirber\Day05;
-
 /**
  * The Elf has for you both the page ordering rules and the 
  * pages to produce in each update (your puzzle input), but 

@@ -1,7 +1,5 @@
 <?php
 
-namespace Sirber\Day03;
-
 /**
  * It seems like the goal of the program is just to multiply some numbers. It 
  * does that with instructions like mul(X,Y), where X and Y are each 1-3 digit 

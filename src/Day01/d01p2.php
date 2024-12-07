@@ -1,7 +1,5 @@
 <?php
 
-namespace Sirber\Day01;
-
 /**
  * This time, you'll need to figure out exactly how often each number from the left 
  * list appears in the right list. Calculate a total similarity score by adding up 

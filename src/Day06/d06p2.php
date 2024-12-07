@@ -1,7 +1,5 @@
 <?php
 
-namespace Sirber\Day06;
-
 /**
  * You need to get the guard stuck in a loop by adding 
  * a single new obstruction. How many different positions 
