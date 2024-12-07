@@ -29,15 +29,26 @@ class Guard
 {
   public string $direction = '^';
   public array $location = [0, 0];
+  public array $originalLocation = [0, 0];
 
   public function setDirection(string $direction): void
   {
     $this->direction = $direction;
   }
 
+  public function setOriginalLocation(int $y, int $x): void
+  {
+    $this->originalLocation = [$y, $x];
+  }
+
   public function setLocation(int $y, int $x): void
   {
     $this->location = [$y, $x];
+  }
+
+  public function resetLocation(): void
+  {
+    $this->location = $this->originalLocation;
   }
 }
 
@@ -59,6 +70,7 @@ foreach ($lines as $y => $line) {
 
     // Find guard location
     if ($value == $guard->direction) {
+      $guard->setOriginalLocation($y, $x);
       $guard->setLocation($y, $x);
     }
   }
@@ -75,15 +87,20 @@ foreach ($freeSpots as [$y, $x]) {
   $room = $grid; // get a fresh copy
   $room[$y][$x] = 'O';
 
+  $guard->resetLocation();
+
   // Play
   $canMove = MoveType::OK;
-  $nbMove = 0;
+  $visitedStates = [];
   while ($canMove != MoveType::OUT_OF_MAP) {
-    // Safety
-    if ($nbMove > 10000) {
+    // Save the current state
+    $state = join(',', [$guard->location[0], $guard->location[1], $guard->direction]);
+    if (isset($visitedStates[$state])) {
+      // Loop detected
       $nbLoop++;
       break;
     }
+    $visitedStates[$state] = true;
 
     $canMove = canMove($guard, $room, $directions);
     switch ($canMove) {
@@ -94,13 +111,10 @@ foreach ($freeSpots as [$y, $x]) {
         break;
 
       case MoveType::OUT_OF_MAP:
-        markAsVisited($guard->location, $room);
         break;
 
       case MoveType::OK:
-        markAsVisited($guard->location, $room);
         moveGuard($guard, $room, $directions);
-        $nbMove++;
         break;
     }
   }
@@ -164,11 +178,6 @@ function moveGuard(Guard $guard, array &$room, array $directions): void
 
   // Update direction in the room
   $room[$newLocation[0]][$newLocation[1]] = $currentDirection;
-}
-
-function markAsVisited(array $location, array &$room): void
-{
-  $room[$location[0]][$location[1]] = 'X';
 }
 
 function getNewLocation(Guard $guard, array $directions): array
