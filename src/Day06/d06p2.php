@@ -46,8 +46,9 @@ class Guard
     $this->location = [$y, $x];
   }
 
-  public function resetLocation(): void
+  public function reset(): void
   {
+    $this->direction = '^';
     $this->location = $this->originalLocation;
   }
 }
@@ -84,10 +85,12 @@ echo "Nb free spots: " . count($freeSpots) . PHP_EOL;
 
 $nbLoop = 0;
 foreach ($freeSpots as [$y, $x]) {
+  // Reset
   $room = $grid; // get a fresh copy
-  $room[$y][$x] = 'O';
+  $guard->reset();
 
-  $guard->resetLocation();
+  // Set new obstruction
+  $room[$y][$x] = 'O';
 
   // Play
   $canMove = MoveType::OK;
@@ -96,7 +99,7 @@ foreach ($freeSpots as [$y, $x]) {
     // Save the current state
     $state = join(',', [$guard->location[0], $guard->location[1], $guard->direction]);
     if (isset($visitedStates[$state])) {
-      // Loop detected
+      echo 'L';
       $nbLoop++;
       break;
     }
@@ -111,6 +114,7 @@ foreach ($freeSpots as [$y, $x]) {
         break;
 
       case MoveType::OUT_OF_MAP:
+        echo '.';
         break;
 
       case MoveType::OK:
@@ -120,7 +124,7 @@ foreach ($freeSpots as [$y, $x]) {
   }
 }
 
-echo "Result: " . $nbLoop . PHP_EOL;
+echo "\nResult: " . $nbLoop . PHP_EOL;
 
 function findInRoom(array $room, string $type = '.'): int
 {
