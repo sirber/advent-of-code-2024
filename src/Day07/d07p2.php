@@ -1,15 +1,18 @@
 <?php
 
 /**
- * @link https://adventofcode.com/2024/day/7
+ * add operator "|" to concatenate. ex: 12 || 12 = 1212
+ * 
+ * @link https://adventofcode.com/2024/day/7#part2
  */
+
 
 // Data
 $data = file_get_contents(__DIR__ . '/d07.txt');
 $lines = explode("\n", trim($data));
 
 $lineRegex = '/(\d+)/';
-$operations = ['+', '*'];
+$operations = ['+', '*', '|'];
 
 $result = 0;
 foreach ($lines as $line) {
@@ -64,7 +67,7 @@ function generateExpressions(array $numbers, array $operations, $index = 0, $cur
 function evaluateLeftToRight(string $expression): int
 {
   // Split expression into tokens (numbers and operators)
-  $tokens = preg_split('/([+\-*\/])/', $expression, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  $tokens = preg_split('/([+\-*\/]|\|)/', $expression, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
   // Start evaluating strictly left-to-right
   $result = (int)$tokens[0]; // Start with the first number
@@ -77,6 +80,8 @@ function evaluateLeftToRight(string $expression): int
       $result += $nextNumber;
     } elseif ($operator === '*') {
       $result *= $nextNumber;
+    } elseif ($operator === '|') {
+      $result = (int)"$result$nextNumber";
     }
   }
 
