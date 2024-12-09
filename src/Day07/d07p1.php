@@ -29,6 +29,7 @@ foreach ($lines as $line) {
     if ($evaluated === $total) {
       $result += $evaluated;
       echo ".";
+      break;
     }
   }
 }
