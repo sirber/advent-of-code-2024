@@ -11,20 +11,25 @@ enum DefragMode
   case MoveBlock;
 }
 
-// Data
-$data = file_get_contents(__DIR__ . '/d09.txt');
+main();
 
-// Generate
-$fileSystem = generateFileSystem($data);
+function main()
+{
+  // Data
+  $data = file_get_contents(__DIR__ . '/d09.txt');
 
-// Defragment
-$fileSystem = defrag($fileSystem);
+  // Generate
+  $fileSystem = generateFileSystem($data);
 
-// Checksum
-$checksum = checksum($fileSystem);
+  // Defragment
+  $fileSystem = defrag($fileSystem);
 
-// Result
-echo "Result: " . $checksum;
+  // Checksum
+  $checksum = checksum($fileSystem);
+
+  // Result
+  echo "Result: " . $checksum;
+}
 
 function generateFileSystem(string $rawData): string
 {
@@ -53,6 +58,7 @@ function defrag(string $fileSystem): string
   $mode = DefragMode::FindNextFreeSpace;
 
   while (true) {
+    break;
   }
 
   // TODO: 
