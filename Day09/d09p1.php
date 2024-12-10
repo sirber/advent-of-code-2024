@@ -54,7 +54,7 @@ function generateFileSystem(string $rawData): string
 function defrag(string $fileSystem): string
 {
   $startIndex = 0;
-  $endIndex = strlen($fileSystem);
+  $endIndex = strlen($fileSystem) - 1;
   $mode = DefragMode::FindNextFreeSpace;
   $arrFileSystem = str_split($fileSystem);
 
@@ -64,37 +64,42 @@ function defrag(string $fileSystem): string
     }
 
     $startBlock = $arrFileSystem[$startIndex];
-    $enfBlock = $arrFileSystem[$endIndex];
+    $endBlock = $arrFileSystem[$endIndex];
 
     switch ($mode) {
       case DefragMode::FindBlockToMove:
+        echo 'f';
+
         if ($startBlock != '.') {
           $startIndex++;
-          continue;
+          break;
         }
 
         $mode = DefragMode::FindBlockToMove;
         break;
 
       case DefragMode::FindBlockToMove:
-        if ($startBlock == '.') {
+        echo 'b';
+
+        if ($endBlock == '.') {
           $endIndex--;
-          continue;
+          break;
         }
 
         $mode = DefragMode::MoveBlock;
         break;
 
       case DefragMode::MoveBlock:
-        // TODO: move block
+        echo 'm';
+
+        $arrFileSystem[$startIndex] = $endBlock;
+        $arrFileSystem[$endIndex] = '.';
 
         $mode = DefragMode::FindNextFreeSpace;
         break;
     }
   }
 
-  // TODO: 
-  // return "0099811188827773336446555566..............";
   return $fileSystem;
 }
 
