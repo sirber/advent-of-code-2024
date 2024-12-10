@@ -4,11 +4,11 @@
  * @link https://adventofcode.com/2024/day/9
  */
 
-enum DefragMode
+enum DefragMode: int
 {
-  case FindNextFreeSpace;
-  case FindBlockToMove;
-  case MoveBlock;
+  const FindNextFreeSpace = 0;
+  const FindBlockToMove = 1;
+  const MoveBlock = 2;
 }
 
 main();
@@ -33,6 +33,8 @@ function main()
 
 function generateFileSystem(string $rawData): string
 {
+  echo "\ngenerateFileSystem\n";
+
   $parsedData = array_map(fn(string $char) => (int) $char, str_split($rawData));
 
   $fileSystem = '';
@@ -53,6 +55,8 @@ function generateFileSystem(string $rawData): string
 
 function defrag(string $fileSystem): string
 {
+  echo "\ndefrag\n";
+
   $startIndex = 0;
   $endIndex = strlen($fileSystem) - 1;
   $mode = DefragMode::FindNextFreeSpace;
@@ -67,7 +71,7 @@ function defrag(string $fileSystem): string
     $endBlock = $arrFileSystem[$endIndex];
 
     switch ($mode) {
-      case DefragMode::FindBlockToMove:
+      case DefragMode::FindNextFreeSpace:
         echo 'f';
 
         if ($startBlock != '.') {
@@ -97,6 +101,9 @@ function defrag(string $fileSystem): string
 
         $mode = DefragMode::FindNextFreeSpace;
         break;
+
+      default:
+        throw new Exception("unknown mode: " . $mode);
     }
   }
 
@@ -105,6 +112,8 @@ function defrag(string $fileSystem): string
 
 function checksum(string $fileSystem): int
 {
+  echo "\nchecksum\n";
+
   $parsedData = str_split($fileSystem);
 
   $result = 0;
