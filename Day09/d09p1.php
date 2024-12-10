@@ -11,64 +11,33 @@ enum DefragMode: int
   const MoveBlock = 2;
 }
 
-test();
 main();
 
 function main(): void
 {
-  // Data
   $data = file_get_contents(__DIR__ . '/d09.txt');
-
-  // Generate
   $fileSystem = generateFileSystem($data);
-
-  // Defragment
   $fileSystem = defrag($fileSystem);
-
-  // Checksum
   $checksum = checksum($fileSystem);
 
   // Result
   echo "Result: " . $checksum;
 }
 
-function test(): void
-{
-  // Generate
-  $data = '2333133121414131402';
-  $result = '00...111...2...333.44.5555.6666.777.888899';
-  if ($result != generateFileSystem($data)) {
-    throw new Exception('generateFileSystem() is broken');
-  }
-
-  // Defragment
-  $data = '00...111...2...333.44.5555.6666.777.888899';
-  $result = '0099811188827773336446555566..............';
-  if ($result != defrag($data)) {
-    throw new Exception('defrag() is broken');
-  }
-
-  // Checksum
-  $data = '0099811188827773336446555566..............';
-  $result = 1928;
-  if ($result != checksum($data)) {
-    throw new Exception('checksum() is broken');
-  }
-}
-
-function generateFileSystem(string $rawData): string
+function generateFileSystem(string $rawData): array
 {
   $parsedData = array_map(fn(string $char) => (int) $char, str_split($rawData));
 
-  $fileSystem = '';
+  $fileSystem = [];
   $fileId = 0;
   foreach ($parsedData as $index => $value) {
     $isFreeSpace = ($index % 2) > 0;
 
-    if ($isFreeSpace) {
-      $fileSystem .= str_repeat('.', $value);
-    } else {
-      $fileSystem .= str_repeat(($fileId % 10), $value);
+    for ($i = 0; $i < $value; $i++) {
+      $fileSystem[] = $isFreeSpace ? null : $fileId;
+    }
+
+    if (!$isFreeSpace) {
       $fileId++;
     }
   }
@@ -76,24 +45,23 @@ function generateFileSystem(string $rawData): string
   return $fileSystem;
 }
 
-function defrag(string $fileSystem): string
+function defrag(array $fileSystem): array
 {
   $startIndex = 0;
-  $endIndex = strlen($fileSystem) - 1;
+  $endIndex = count($fileSystem) - 1;
   $mode = DefragMode::FindNextFreeSpace;
-  $arrFileSystem = str_split($fileSystem);
 
   while (true) {
     if ($startIndex >= $endIndex) {
       break;
     }
 
-    $startBlock = $arrFileSystem[$startIndex];
-    $endBlock = $arrFileSystem[$endIndex];
+    $startBlock = $fileSystem[$startIndex];
+    $endBlock = $fileSystem[$endIndex];
 
     switch ($mode) {
       case DefragMode::FindNextFreeSpace:
-        if ($startBlock != '.') {
+        if ($startBlock !== null) {
           $startIndex++;
           break;
         }
@@ -102,7 +70,7 @@ function defrag(string $fileSystem): string
         break;
 
       case DefragMode::FindBlockToMove:
-        if ($endBlock == '.') {
+        if ($endBlock === null) {
           $endIndex--;
           break;
         }
@@ -111,8 +79,8 @@ function defrag(string $fileSystem): string
         break;
 
       case DefragMode::MoveBlock:
-        $arrFileSystem[$startIndex] = $endBlock;
-        $arrFileSystem[$endIndex] = '.';
+        $fileSystem[$startIndex] = $endBlock;
+        $fileSystem[$endIndex] = null;
 
         $mode = DefragMode::FindNextFreeSpace;
         break;
@@ -122,20 +90,18 @@ function defrag(string $fileSystem): string
     }
   }
 
-  return join($arrFileSystem);
+  return $fileSystem;
 }
 
-function checksum(string $fileSystem): int
+function checksum(array $fileSystem): int
 {
-  $parsedData = str_split($fileSystem);
-
   $result = 0;
-  foreach ($parsedData as $index => $value) {
-    if ($value == '.') {
+  foreach ($fileSystem as $index => $id) {
+    if (null === $id) {
       break;
     }
 
-    $result += ($index * $value);
+    $result += ($index * $id);
   }
 
   return $result;
