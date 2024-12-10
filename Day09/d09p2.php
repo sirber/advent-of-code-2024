@@ -4,13 +4,6 @@
  * @link https://adventofcode.com/2024/day/9#part2
  */
 
-enum DefragMode: int
-{
-    const FindNextFreeSpace = 0;
-    const FindBlockToMove = 1;
-    const MoveBlock = 2;
-}
-
 main();
 
 function main(): void
@@ -47,10 +40,6 @@ function generateFileSystem(string $rawData): array
 
 function defrag(array $fileSystem): array
 {
-    $startIndex = 0;
-    $endIndex = count($fileSystem) - 1;
-    $mode = DefragMode::FindNextFreeSpace;
-
     // TODO: defrag whole files
 
     return $fileSystem;
