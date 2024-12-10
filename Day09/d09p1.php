@@ -72,8 +72,6 @@ function defrag(string $fileSystem): string
 
     switch ($mode) {
       case DefragMode::FindNextFreeSpace:
-        echo 'f';
-
         if ($startBlock != '.') {
           $startIndex++;
           break;
@@ -83,8 +81,6 @@ function defrag(string $fileSystem): string
         break;
 
       case DefragMode::FindBlockToMove:
-        echo 'b';
-
         if ($endBlock == '.') {
           $endIndex--;
           break;
@@ -94,8 +90,6 @@ function defrag(string $fileSystem): string
         break;
 
       case DefragMode::MoveBlock:
-        echo 'm';
-
         $arrFileSystem[$startIndex] = $endBlock;
         $arrFileSystem[$endIndex] = '.';
 
@@ -107,7 +101,7 @@ function defrag(string $fileSystem): string
     }
   }
 
-  return $fileSystem;
+  return join($arrFileSystem);
 }
 
 function checksum(string $fileSystem): int
