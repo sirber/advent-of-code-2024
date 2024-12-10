@@ -33,8 +33,6 @@ function main()
 
 function generateFileSystem(string $rawData): string
 {
-  echo "\ngenerateFileSystem\n";
-
   $parsedData = array_map(fn(string $char) => (int) $char, str_split($rawData));
 
   $fileSystem = '';
@@ -55,8 +53,6 @@ function generateFileSystem(string $rawData): string
 
 function defrag(string $fileSystem): string
 {
-  echo "\ndefrag\n";
-
   $startIndex = 0;
   $endIndex = strlen($fileSystem) - 1;
   $mode = DefragMode::FindNextFreeSpace;
@@ -106,8 +102,6 @@ function defrag(string $fileSystem): string
 
 function checksum(string $fileSystem): int
 {
-  echo "\nchecksum\n";
-
   $parsedData = str_split($fileSystem);
 
   $result = 0;
