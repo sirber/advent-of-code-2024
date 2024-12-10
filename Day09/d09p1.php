@@ -4,6 +4,13 @@
  * @link https://adventofcode.com/2024/day/9
  */
 
+enum DefragMode
+{
+  case FindNextFreeSpace;
+  case FindBlockToMove;
+  case MoveBlock;
+}
+
 // Data
 $data = file_get_contents(__DIR__ . '/d09.txt');
 
@@ -16,7 +23,8 @@ $fileSystem = defrag($fileSystem);
 // Checksum
 $checksum = checksum($fileSystem);
 
-echo $checksum;
+// Result
+echo "Result: " . $checksum;
 
 function generateFileSystem(string $rawData): string
 {
@@ -40,8 +48,16 @@ function generateFileSystem(string $rawData): string
 
 function defrag(string $fileSystem): string
 {
+  $startIndex = 0;
+  $endIndex = strlen($fileSystem);
+  $mode = DefragMode::FindNextFreeSpace;
+
+  while (true) {
+  }
+
   // TODO: 
-  return "0099811188827773336446555566..............";
+  // return "0099811188827773336446555566..............";
+  return $fileSystem;
 }
 
 function checksum(string $fileSystem): int
