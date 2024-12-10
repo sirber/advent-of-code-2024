@@ -11,9 +11,10 @@ enum DefragMode: int
   const MoveBlock = 2;
 }
 
+test();
 main();
 
-function main()
+function main(): void
 {
   // Data
   $data = file_get_contents(__DIR__ . '/d09.txt');
@@ -29,6 +30,30 @@ function main()
 
   // Result
   echo "Result: " . $checksum;
+}
+
+function test(): void
+{
+  // Generate
+  $data = '2333133121414131402';
+  $result = '00...111...2...333.44.5555.6666.777.888899';
+  if ($result != generateFileSystem($data)) {
+    throw new Exception('generateFileSystem() is broken');
+  }
+
+  // Defragment
+  $data = '00...111...2...333.44.5555.6666.777.888899';
+  $result = '0099811188827773336446555566..............';
+  if ($result != defrag($data)) {
+    throw new Exception('defrag() is broken');
+  }
+
+  // Checksum
+  $data = '0099811188827773336446555566..............';
+  $result = 1928;
+  if ($result != checksum($data)) {
+    throw new Exception('checksum() is broken');
+  }
 }
 
 function generateFileSystem(string $rawData): string
