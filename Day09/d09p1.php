@@ -56,9 +56,41 @@ function defrag(string $fileSystem): string
   $startIndex = 0;
   $endIndex = strlen($fileSystem);
   $mode = DefragMode::FindNextFreeSpace;
+  $arrFileSystem = str_split($fileSystem);
 
   while (true) {
-    break;
+    if ($startIndex >= $endIndex) {
+      break;
+    }
+
+    $startBlock = $arrFileSystem[$startIndex];
+    $enfBlock = $arrFileSystem[$endIndex];
+
+    switch ($mode) {
+      case DefragMode::FindBlockToMove:
+        if ($startBlock != '.') {
+          $startIndex++;
+          continue;
+        }
+
+        $mode = DefragMode::FindBlockToMove;
+        break;
+
+      case DefragMode::FindBlockToMove:
+        if ($startBlock == '.') {
+          $endIndex--;
+          continue;
+        }
+
+        $mode = DefragMode::MoveBlock;
+        break;
+
+      case DefragMode::MoveBlock:
+        // TODO: move block
+
+        $mode = DefragMode::FindNextFreeSpace;
+        break;
+    }
   }
 
   // TODO: 
