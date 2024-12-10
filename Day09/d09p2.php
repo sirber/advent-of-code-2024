@@ -44,16 +44,30 @@ function defrag(array $fileSystem): array
     $lastFileId = $fileSystem[array_key_last(array_filter($fileSystem, fn($block) => null !== $block))];
 
     while ($lastFileId >= 0) {
-        // TODO: Get Last File length (with indexes)
+        echo "$lastFileId: ";
 
-        // TODO: Get First long enough Free Space (with indexes)
+        $fileBlocks = array_keys(array_filter($fileSystem, fn($fileId) => $fileId == $lastFileId));
+        $fileLen = count($fileBlocks);
+        echo "($fileLen) ";
 
-        // TODO: Move File
-
+        $freeBlocksAt = findFirstXConsecutiveNulls($fileSystem, $fileLen);
         $lastFileId--;
+        if (!$freeBlocksAt || $freeBlocksAt > $fileBlocks[0]) {
+            echo "skipped\n";
+            continue;
+        }
+
+        $i = 0;
+        foreach ($fileBlocks as $index) {
+            $fileSystem[$freeBlocksAt + $i] = $lastFileId;
+            $fileSystem[$index] = null;
+            $i++;
+        }
+
+        echo "moved at $freeBlocksAt\n";
     }
 
-    return $fileSystem;
+    return array_values($fileSystem); // resets index
 }
 
 function checksum(array $fileSystem): int
@@ -68,4 +82,24 @@ function checksum(array $fileSystem): int
     }
 
     return $result;
+}
+
+function findFirstXConsecutiveNulls(array $arr, int $x): ?int
+{
+    $count = 0;
+
+    foreach ($arr as $key => $value) {
+        if (is_null($value)) {
+            $count++;
+            if ($count === $x) {
+                // Return the starting index of the sequence
+                return $key - $x + 1;
+            }
+        } else {
+            $count = 0; // Reset count if a non-null value is found
+        }
+    }
+
+    // Return null if no such sequence exists
+    return null;
 }
