@@ -45,6 +45,7 @@ function generateFileSystem(string $rawData): array
   return $fileSystem;
 }
 
+// Defrag Blocks
 function defrag(array $fileSystem): array
 {
   $startIndex = 0;

@@ -38,9 +38,20 @@ function generateFileSystem(string $rawData): array
     return $fileSystem;
 }
 
+// Defrag Whole Files
 function defrag(array $fileSystem): array
 {
-    // TODO: defrag whole files
+    $lastFileId = $fileSystem[array_key_last(array_filter($fileSystem, fn($block) => null !== $block))];
+
+    while ($lastFileId >= 0) {
+        // TODO: Get Last File length (with indexes)
+
+        // TODO: Get First long enough Free Space (with indexes)
+
+        // TODO: Move File
+
+        $lastFileId--;
+    }
 
     return $fileSystem;
 }
