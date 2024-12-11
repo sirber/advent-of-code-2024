@@ -2,6 +2,8 @@
 
 /**
  * @link https://adventofcode.com/2024/day/9#part2
+ * 
+ * status: broken
  */
 
 main();
@@ -50,7 +52,7 @@ function defrag(array $fileSystem): array
         $fileLen = count($fileBlocks);
         echo "($fileLen) ";
 
-        $freeBlocksAt = findFirstXConsecutiveNulls($fileSystem, $fileLen);
+        $freeBlocksAt = findFirstXConsecutiveNulls($fileSystem, $fileLen, $fileBlocks[0]);
         $lastFileId--;
         if (!$freeBlocksAt || $freeBlocksAt > $fileBlocks[0]) {
             echo "skipped\n";
@@ -74,26 +76,28 @@ function checksum(array $fileSystem): int
 {
     $result = 0;
     foreach ($fileSystem as $index => $id) {
-        if (null === $id) {
-            continue;
+        if (null !== $id) {
+            $result += ($index * $id);
         }
-
-        $result += ($index * $id);
     }
 
     return $result;
 }
 
-function findFirstXConsecutiveNulls(array $arr, int $x): ?int
+function findFirstXConsecutiveNulls(array $arr, int $size, int $max): ?int
 {
     $count = 0;
 
     foreach ($arr as $key => $value) {
+        if ($key > $max) {
+            return null;
+        }
+
         if (is_null($value)) {
             $count++;
-            if ($count === $x) {
+            if ($count === $size) {
                 // Return the starting index of the sequence
-                return $key - $x + 1;
+                return $key - $size + 1;
             }
         } else {
             $count = 0; // Reset count if a non-null value is found
