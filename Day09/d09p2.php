@@ -46,7 +46,7 @@ function defrag(array $fileSystem): array
     while ($lastFileId >= 0) {
         echo "$lastFileId: ";
 
-        $fileBlocks = array_keys(array_filter($fileSystem, fn($fileId) => $fileId == $lastFileId));
+        $fileBlocks = array_keys(array_filter($fileSystem, fn($fileId) => $fileId === $lastFileId));
         $fileLen = count($fileBlocks);
         echo "($fileLen) ";
 
@@ -75,7 +75,7 @@ function checksum(array $fileSystem): int
     $result = 0;
     foreach ($fileSystem as $index => $id) {
         if (null === $id) {
-            break;
+            continue;
         }
 
         $result += ($index * $id);
